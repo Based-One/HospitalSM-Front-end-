@@ -1,0 +1,257 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Hospital Appointments Management">
+  <main class="p-8 bg-gray-100 min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h1 class="text-2xl font-semibold mb-4">Manage Appointments</h1>
+
+      <!-- Filters and Search -->
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex space-x-4">
+          <select id="filter-department" class="px-4 py-2 border rounded-md">
+            <option value="">All Departments</option>
+            <option value="cardiology">Cardiology</option>
+            <option value="orthopedics">Orthopedics</option>
+            <option value="pediatrics">Pediatrics</option>
+          </select>
+          <select id="filter-doctor" class="px-4 py-2 border rounded-md">
+            <option value="">All Doctors</option>
+            <option value="dr-smith">Dr. Smith</option>
+            <option value="dr-jones">Dr. Jones</option>
+          </select>
+          <input
+            type="date"
+            id="filter-date"
+            class="px-4 py-2 border rounded-md"
+          />
+        </div>
+        <div>
+          <button
+            id="add-appointment"
+            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Add Appointment
+          </button>
+        </div>
+      </div>
+
+      <!-- Appointment Table -->
+      <table class="w-full border-collapse">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-4 py-2 text-left">Patient Name</th>
+            <th class="px-4 py-2 text-left">Doctor</th>
+            <th class="px-4 py-2 text-left">Department</th>
+            <th class="px-4 py-2 text-left">Date & Time</th>
+            <th class="px-4 py-2 text-left">Status</th>
+            <th class="px-4 py-2 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="appointments-table" class="bg-white">
+          <!-- Dynamic rows -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add/Edit Appointment Modal -->
+    <div
+      id="appointment-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <h2 id="modal-title" class="text-xl font-semibold mb-4">
+          Add Appointment
+        </h2>
+        <form id="appointment-form" class="space-y-4">
+          <input
+            type="text"
+            id="patient-name"
+            placeholder="Patient Name"
+            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
+            required
+          />
+          <select
+            id="doctor"
+            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
+            required
+          >
+            <option value="">Select Doctor</option>
+            <option value="dr-smith">Dr. Smith</option>
+            <option value="dr-jones">Dr. Jones</option>
+          </select>
+          <select
+            id="department"
+            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
+            required
+          >
+            <option value="">Select Department</option>
+            <option value="cardiology">Cardiology</option>
+            <option value="orthopedics">Orthopedics</option>
+          </select>
+          <input
+            type="datetime-local"
+            id="appointment-time"
+            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
+            required
+          />
+          <select
+            id="status"
+            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
+          >
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button
+            type="submit"
+            class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Save
+          </button>
+        </form>
+        <button
+          id="close-modal"
+          class="mt-4 w-full px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+   document.addEventListener("DOMContentLoaded", () => {
+  const appointmentsTable = document.getElementById("appointments-table");
+  const appointmentModal = document.getElementById("appointment-modal");
+  const closeModalButton = document.getElementById("close-modal");
+  const addAppointmentButton = document.getElementById("add-appointment");
+  const appointmentForm = document.getElementById("appointment-form");
+  const apiBaseUrl = import.meta.env.API_BASE_URL;
+
+  // Backend API URL
+  
+
+  // Fetch and render appointments
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch(apiBaseUrl);
+      const appointments = await response.json();
+
+      renderAppointments(appointments);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
+
+  // Render appointments into the table
+  const renderAppointments = (appointments) => {
+    appointmentsTable.innerHTML = ""; // Clear table
+    appointments.forEach((appointment) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="px-4 py-2">${appointment.patientName}</td>
+        <td class="px-4 py-2">${appointment.doctor}</td>
+        <td class="px-4 py-2">${appointment.department}</td>
+        <td class="px-4 py-2">${appointment.dateTime}</td>
+        <td class="px-4 py-2">${appointment.status}</td>
+        <td class="px-4 py-2 text-center">
+          <button 
+            data-id="${appointment.id}" 
+            class="edit-btn px-2 py-1 bg-yellow-500 text-white rounded-md"
+          >
+            Edit
+          </button>
+          <button 
+            data-id="${appointment.id}" 
+            class="delete-btn px-2 py-1 bg-red-500 text-white rounded-md"
+          >
+            Delete
+          </button>
+        </td>
+      `;
+      appointmentsTable.appendChild(row);
+    });
+
+    attachEventListeners();
+  };
+
+  // Add appointment
+  appointmentForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newAppointment = {
+      patientName: document.getElementById("patient-name").nodeValue,
+      doctor: document.getElementById("doctor").nodeValue,
+      department: document.getElementById("department").nodeValue,
+      dateTime: document.getElementById("appointment-time").nodeValue,
+      status: document.getElementById("status").nodeValue,
+    };
+
+    try {
+      const response = await fetch(apiBaseUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newAppointment),
+      });
+
+      if (response.ok) {
+        appointmentModal.classList.add("hidden");
+        fetchAppointments(); // Refresh appointments
+      } else {
+        console.error("Failed to add appointment");
+      }
+    } catch (error) {
+      console.error("Error adding appointment:", error);
+    }
+  });
+
+  // Delete appointment
+  const deleteAppointment = async (id) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        fetchAppointments(); // Refresh appointments
+      } else {
+        console.error("Failed to delete appointment");
+      }
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+    }
+  };
+
+  // Attach event listeners for edit and delete buttons
+  const attachEventListeners = () => {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    deleteButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const target = e.target as HTMLButtonElement;
+        const id = target.getAttribute("data-id");
+        deleteAppointment(id);
+      });
+    });
+
+    // Add similar logic for editing if needed
+  };
+
+  // Event to open the modal for adding appointments
+  addAppointmentButton.addEventListener("click", () => {
+    appointmentModal.classList.remove("hidden");
+  });
+
+  // Event to close the modal
+  closeModalButton.addEventListener("click", () => {
+    appointmentModal.classList.add("hidden");
+  });
+
+  // Fetch and render appointments on page load
+  fetchAppointments();
+});
+
+  </script>
+</Layout>

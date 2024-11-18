@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Vista recepcionista general">
+  <main class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
+      <h1 class="text-3xl font-semibold mb-6">Vista recepcionista general</h1>
+      <div class="space-x-4">
+        <button id= "crear-cita"class="px-6 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none">
+          Crear cita
+        </button>
+        <button id = "gestionar-citas"class="px-6 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none">
+          Gestionar cita
+        </button>
+      </div>
+    </div>
+  </main>
+  <script>
+    document.getElementById('crear-cita').addEventListener('click', () =>{
+
+    window.location.href = '/CrearCita';
+    })
+    document.getElementById('gestionar-citas').addEventListener('click',()=>{
+        window.location.href = '/GestionarCitas'
+    })
+
+
+  </script>
+</Layout>

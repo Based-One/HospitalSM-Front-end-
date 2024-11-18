@@ -3,10 +3,15 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Login to Hospital">
-  <main class="flex justify-center items-center min-h-screen bg-gray-100">
+  <main class="flex justify-center items-center min-h-screen" style="background-color: #D9D9D9;">
     <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-      <h1 class="text-2xl font-bold mb-4 text-center">Login</h1>
-      <form action="/api/login" method="POST" class="space-y-4">
+      <!-- Logo -->
+      <div class="flex justify-center mb-4">
+        <h1 class="text-3xl font-bold" style="color: #2784FF;">HospitalSM</h1>
+      </div>
+
+      <h1 class="text-2xl font-bold mb-4 text-center" style="color: #2784FF;">Login</h1>
+      <form id="loginForm" class="space-y-4">
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
           <input
@@ -30,15 +35,56 @@ import Layout from '../layouts/Layout.astro';
           />
         </div>
         <button
-          type="submit"
-          class="w-full py-2 px-4 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          type="submit" id="submitLogin"
+          class="w-full py-2 px-4"
+          style="background-color: #2784FF; color: white; font-weight: 500; border-radius: 0.375rem;"
+          onmouseover="this.style.backgroundColor='#1a5fc4';"
+          onmouseout="this.style.backgroundColor='#2784FF';"
         >
           Login
         </button>
       </form>
-      <p class="mt-4 text-sm text-center text-gray-600">
-        Don't have an account? <a href="/register" class="text-indigo-600 hover:underline">Sign up</a>
-      </p>
+      <!-- <p class="mt-4 text-sm text-center text-gray-600">
+        Don't have an account? <a href="/Registrar" class="text-indigo-600 hover:underline">Sign up</a>
+      </p> -->
     </div>
   </main>
+
+  <script>
+    const form = document.getElementById('loginForm') as HTMLFormElement;
+    const apiBaseUrl = import.meta.env.API_BASE_URL;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {
+        username: formData.get('username'),
+        password: formData.get('password')
+      };
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/api/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert(result.message); // Show success message
+          // Redirect to the General Receptionist page
+          window.location.href = '/GeneralReceptionist';
+        } else {
+          alert(result.error); // Show error message
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while logging in.');
+      }
+    });
+  </script>
 </Layout>
