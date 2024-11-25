@@ -2,89 +2,95 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Login to Hospital">
-  <main class="flex justify-center items-center min-h-screen" style="background-color: #D9D9D9;">
-    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+<Layout title="Login to HospitalSM">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Left Side -->
+    <div class="w-1/2 bg-white flex flex-col justify-center px-12">
       <!-- Logo -->
-      <div class="flex justify-center mb-4">
-        <h1 class="text-3xl font-bold" style="color: #2784FF;">HospitalSM</h1>
+      <div class="mb-8">
+        <div class="flex items-center mb-4">
+          <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8 mr-2" />
+          <h1 class="text-3xl font-bold text-blue-500">HospitalSM</h1>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">¡Bienvenido!</h2>
+        <p class="text-gray-600">Ingrese sus datos para acceder a su cuenta</p>
       </div>
 
-      <h1 class="text-2xl font-bold mb-4 text-center" style="color: #2784FF;">Login</h1>
+      <!-- Login Form -->
       <form id="loginForm" class="space-y-4">
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+          <label for="username" class="block text-sm font-medium text-gray-700">Número de identificación</label>
           <input
             type="text"
             id="username"
             name="username"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Enter your username"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Ingrese número de identificación"
             required
           />
         </div>
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
           <input
             type="password"
             id="password"
             name="password"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Enter your password"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Ingrese contraseña"
             required
           />
         </div>
         <button
-          type="submit" id="submitLogin"
-          class="w-full py-2 px-4"
-          style="background-color: #2784FF; color: white; font-weight: 500; border-radius: 0.375rem;"
-          onmouseover="this.style.backgroundColor='#1a5fc4';"
-          onmouseout="this.style.backgroundColor='#2784FF';"
+          type="submit"
+          id="submitLogin"
+          class="w-full py-2 px-4 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          Login
+          Ingresar
         </button>
       </form>
-      <!-- <p class="mt-4 text-sm text-center text-gray-600">
-        Don't have an account? <a href="/Registrar" class="text-indigo-600 hover:underline">Sign up</a>
-      </p> -->
     </div>
+
+    <!-- Right Side -->
+    <div class="w-1/2 bg-cover bg-center" style="background-image: url('/path/to/your/image.jpg');"></div>
   </main>
 
   <script>
-    const form = document.getElementById('loginForm') as HTMLFormElement;
-    const apiBaseUrl = import.meta.env.API_BASE_URL;
+    const form = document.getElementById('loginForm');
+    const submitButton = document.getElementById('submitLogin');
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
+    if (form instanceof HTMLFormElement) {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-      const formData = new FormData(form);
-      const data = {
-        username: formData.get('username'),
-        password: formData.get('password')
-      };
+        submitButton.textContent = 'Ingresando...';
+        const formData = new FormData(form);
+        const data = {
+          username: formData.get('username'),
+          password: formData.get('password'),
+        };
 
-      try {
-        const response = await fetch(`${apiBaseUrl}/api/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
+        try {
+          const response = await fetch('http://localhost:8080/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
 
-        const result = await response.json();
+          if (!response.ok) {
+            const errorDetails = await response.json();
+            throw new Error(errorDetails.error || 'Failed to log in.');
+          }
 
-        if (response.ok) {
-          alert(result.message); // Show success message
-          // Redirect to the General Receptionist page
-          window.location.href = '/GeneralReceptionist';
-        } else {
-          alert(result.error); // Show error message
+          const result = await response.json();
+          alert(result.message);
+          window.location.href = '/RecepcionistaGeneral';
+        } catch (error) {
+          console.error('Login error:', error);
+          alert('An error occurred while logging in: ' + error.message);
+        } finally {
+          submitButton.textContent = 'Ingresar';
         }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred while logging in.');
-      }
-    });
+      });
+    }
   </script>
 </Layout>

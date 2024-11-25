@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Vista Recepcionista General">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
+      <div class="flex flex-col items-center space-y-4">
+        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+      </div>
+      <nav class="space-y-6 text-center">
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
+          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+          <span>Inicio</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
+          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
+          <span>Citas</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
+          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
+          <span>Gestión</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="flex-grow p-8 bg-white">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 id="receptionist-name" class="text-2xl font-semibold">Loading...</h2>
+          <p id="receptionist-role" class="text-gray-600">Cargando...</p>
+        </div>
+        
+      </div>
+
+      <!-- Buttons Section -->
+      <div class="space-y-4">
+        <button
+          id="agendar-cita"
+          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
+        >
+          Agendar Cita
+        </button>
+        <button
+          id="buscar-cita"
+          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
+        >
+          Citas
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Simulate fetching receptionist data from an API
+    async function fetchReceptionistData() {
+      try {
+        const response = await fetch('http://localhost:8080/api/receptionist'); // Replace with actual API endpoint
+        const data = await response.json();
+        document.getElementById('receptionist-name').textContent = data.name || "Nombre no disponible";
+        document.getElementById('receptionist-role').textContent = data.role || "Rol no disponible";
+      } catch (error) {
+        console.error('Error fetching receptionist data:', error);
+        document.getElementById('receptionist-name').textContent = "Error al cargar";
+        document.getElementById('receptionist-role').textContent = "Error al cargar";
+      }
+    }
+
+    fetchReceptionistData();
+
+    document.getElementById('agendar-cita').addEventListener('click', () => {
+      window.location.href = '/CreateAppointment';
+    });
+    document.getElementById('buscar-cita').addEventListener('click', () => {
+      window.location.href = '../../AppointmentManagement';
+    });
+  </script>
+</Layout>

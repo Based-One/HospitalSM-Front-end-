@@ -1,0 +1,199 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Crear Cita">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
+      <div class="flex flex-col items-center space-y-4">
+        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+      </div>
+      <nav class="space-y-6 text-center">
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
+          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+          <span>Inicio</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
+          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
+          <span>Citas</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
+          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
+          <span>Gestión</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="flex-grow p-8 bg-white">
+      <div class="flex items-center space-x-4 mb-6">
+        <button
+          id="back-button"
+          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none"
+        >
+          Regresar
+        </button>
+        <h1 class="text-2xl font-semibold">Crear Cita</h1>
+      </div>
+
+      <p class="mb-6 text-gray-600">
+        Verificar si el paciente ya existe, si es así, pre llenar sus datos en el formulario que
+        prosigue.
+      </p>
+
+      <form class="space-y-6">
+        <!-- Search Type -->
+        <div class="space-y-2">
+          <label class="flex items-center space-x-3">
+            <input
+              type="radio"
+              name="searchType"
+              value="id"
+              class="form-radio text-gray-600"
+              checked
+            />
+            <span>Buscar por ID</span>
+          </label>
+          <label class="flex items-center space-x-3">
+            <input
+              type="radio"
+              name="searchType"
+              value="gobId"
+              class="form-radio text-gray-600"
+            />
+            <span>Buscar por GOB ID</span>
+          </label>
+          <label class="flex items-center space-x-3">
+            <input
+              type="radio"
+              name="searchType"
+              value="newPatient"
+              class="form-radio text-gray-600"
+            />
+            <span>Nuevo Paciente</span>
+          </label>
+        </div>
+
+        <!-- Search Bar -->
+        <div id="search-bar" class="flex items-center space-x-4">
+          <input
+            type="text"
+            placeholder="Ingresar ID"
+            class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-200"
+          />
+          <button
+            type="button"
+            class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 focus:outline-none"
+          >
+            Validar
+          </button>
+        </div>
+
+        <!-- Registrar Paciente Button -->
+        <div id="register-button" class="hidden">
+          <button
+            id="register-patient"
+            class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+          >
+            Registrar Paciente
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Popup Modal -->
+    <div
+      id="new-patient-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden"
+    >
+      <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 class="text-xl font-semibold mb-4">Registro de Nuevo Paciente</h2>
+        <form id="new-patient-form" class="space-y-4">
+          <input
+            type="text"
+            placeholder="Nombre"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-200"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Apellido"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-200"
+            required
+          />
+          <input
+            type="email"
+            placeholder="Correo Electrónico"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-gray-200"
+            required
+          />
+          <button
+            type="submit"
+            class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+          >
+            Registrar
+          </button>
+        </form>
+        <button
+          id="close-modal"
+          class="mt-4 w-full px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 focus:outline-none"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const goBackButton = document.getElementById('back-button');
+    const searchBar = document.getElementById('search-bar');
+    const newPatientModal = document.getElementById('new-patient-modal');
+    const registerButtonDiv = document.getElementById('register-button');
+    const closeModalButton = document.getElementById('close-modal');
+    const radioButtons = document.querySelectorAll('input[name="searchType"]');
+  
+    // Handle the "Back" button functionality
+    goBackButton.addEventListener('click', () => {
+      window.history.back();
+    });
+  
+    // Handle radio button changes
+    radioButtons.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        const selectedOption = document.querySelector('input[name="searchType"]:checked').value;
+  
+        if (selectedOption === 'newPatient') {
+          // Hide the search bar
+          searchBar.classList.add('hidden');
+  
+          // Show the modal
+          newPatientModal.classList.remove('hidden');
+        } else {
+          // Show the search bar
+          searchBar.classList.remove('hidden');
+  
+          newPatientModal.classList.add('hidden');
+  
+          // Hide the "Registrar Paciente" button
+          registerButtonDiv.classList.add('hidden');
+        }
+      });
+    });
+  
+    closeModalButton.addEventListener('click', () => {
+      // Hide the modal
+      newPatientModal.classList.add('hidden');
+  
+      registerButtonDiv.classList.remove('hidden');
+    });
+  
+    registerButtonDiv.addEventListener('click', (event) => {
+      event.preventDefault();
+  
+      // Reopen the modal
+      newPatientModal.classList.remove('hidden');
+    });
+  </script>
+  
+</Layout>
