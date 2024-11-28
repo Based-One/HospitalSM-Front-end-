@@ -1,4 +1,5 @@
 ---
+// Management Dashboard Component
 import Layout from '../layouts/Layout.astro';
 ---
 
@@ -10,263 +11,187 @@ import Layout from '../layouts/Layout.astro';
         <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
       </div>
       <nav class="space-y-6 text-center">
-        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+        <button
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full"
+          id="inicio"
+        >
+          <i class="fas fa-home w-6 h-6"></i>
           <span>Inicio</span>
         </button>
-        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
-          <span>Citas</span>
+        <button
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full"
+          id="citas"
+        >
+          <i class="fas fa-calendar-alt w-6 h-6"></i>
+          <span>Agendar Cita</span>
         </button>
-        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
-          <span>Gestión</span>
-        </button>
+      
       </nav>
     </aside>
 
     <!-- Main Content -->
-    <section class="flex-grow p-8 bg-white">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-semibold">Gestión de Citas</h1>
-        <button
-          id="add-appointment"
-          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Añadir Cita
-        </button>
-      </div>
+    <section class="flex-grow p-8 bg-white" id="mainContent">
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-6">
+        <div>
+          <h2 id="dashboard-title" class="text-2xl font-semibold">Gestión de Citas</h2>
+          <p class="text-gray-600">Administrar, editar, filtrar y eliminar citas</p>
+        </div>
+      </header>
 
-      <!-- Filters -->
-      <div class="flex space-x-4 mb-6">
-        <select id="filter-department" class="px-4 py-2 border rounded-md">
-          <option value="">Todos los Departamentos</option>
-          <option value="cardiology">Cardiología</option>
-          <option value="orthopedics">Ortopedia</option>
-          <option value="pediatrics">Pediatría</option>
-        </select>
-        <select id="filter-doctor" class="px-4 py-2 border rounded-md">
-          <option value="">Todos los Doctores</option>
-          <option value="dr-smith">Dr. Smith</option>
-          <option value="dr-jones">Dr. Jones</option>
-        </select>
-        <input
-          type="date"
-          id="filter-date"
-          class="px-4 py-2 border rounded-md"
-        />
+      <!-- Filters Section -->
+      <div class="space-y-4 bg-gray-50 p-6 rounded-lg shadow-lg mb-8">
+        <h3 class="text-xl font-bold text-gray-800">Filtros</h3>
+        <div class="grid grid-cols-4 gap-4">
+          <!-- Search by Name -->
+          <div>
+            <label for="search-name" class="block text-sm font-medium text-gray-700">Nombre:</label>
+            <input
+              type="text"
+              id="search-name"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Buscar por nombre"
+            />
+          </div>
+          <!-- Filter by Appointment Type -->
+          <div>
+            <label for="filter-type" class="block text-sm font-medium text-gray-700">Tipo de cita:</label>
+            <select
+              id="filter-type"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Todos</option>
+              <option value="regular">Regular</option>
+              <option value="emergency">Emergencia</option>
+            </select>
+          </div>
+          <!-- Filter by Status -->
+          <div>
+            <label for="filter-status" class="block text-sm font-medium text-gray-700">Estado:</label>
+            <select
+              id="filter-status"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Todos</option>
+              <option value="critico">Crítico</option>
+              <option value="estable">Estable</option>
+            </select>
+          </div>
+          <!-- Filter by Department -->
+          <div>
+            <label for="filter-department" class="block text-sm font-medium text-gray-700">Departamento:</label>
+            <select
+              id="filter-department"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Todos</option>
+              <option value="cardiologia">Cardiología</option>
+              <option value="neurologia">Neurología</option>
+              <option value="pediatria">Pediatría</option>
+            </select>
+          </div>
+        </div>
+        <button
+          id="apply-filters"
+          class="mt-4 py-2 px-4 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600"
+        >
+          Aplicar Filtros
+        </button>
       </div>
 
       <!-- Appointment Table -->
-      <table class="w-full border-collapse">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="px-4 py-2 text-left">Nombre del Paciente</th>
-            <th class="px-4 py-2 text-left">Doctor</th>
-            <th class="px-4 py-2 text-left">Departamento</th>
-            <th class="px-4 py-2 text-left">Fecha & Hora</th>
-            <th class="px-4 py-2 text-left">Estado</th>
-            <th class="px-4 py-2 text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="appointments-table" class="bg-white">
-          <!-- Dynamic rows -->
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Modal -->
-    <div
-      id="appointment-modal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden"
-    >
-      <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h2 id="modal-title" class="text-xl font-semibold mb-4">Añadir Cita</h2>
-        <form id="appointment-form" class="space-y-4">
-          <input
-            type="text"
-            id="patient-name"
-            placeholder="Nombre del Paciente"
-            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
-            required
-          />
-          <select
-            id="doctor"
-            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
-            required
-          >
-            <option value="">Seleccionar Doctor</option>
-            <option value="dr-smith">Dr. Smith</option>
-            <option value="dr-jones">Dr. Jones</option>
-          </select>
-          <select
-            id="department"
-            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
-            required
-          >
-            <option value="">Seleccionar Departamento</option>
-            <option value="cardiology">Cardiología</option>
-            <option value="orthopedics">Ortopedia</option>
-          </select>
-          <input
-            type="datetime-local"
-            id="appointment-time"
-            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
-            required
-          />
-          <select
-            id="status"
-            class="w-full px-4 py-2 border rounded-md focus:ring focus:ring-gray-200"
-          >
-            <option value="scheduled">Programado</option>
-            <option value="completed">Completado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-          <button
-            type="submit"
-            class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Guardar
-          </button>
-        </form>
-        <button
-          id="close-modal"
-          class="mt-4 w-full px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-        >
-          Cancelar
-        </button>
+      <div class="bg-gray-50 p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Citas</h3>
+        <table class="min-w-full table-auto border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-blue-500 text-white">
+              <th class="border border-gray-300 px-4 py-2">ID</th>
+              <th class="border border-gray-300 px-4 py-2">Nombre</th>
+              <th class="border border-gray-300 px-4 py-2">Tipo</th>
+              <th class="border border-gray-300 px-4 py-2">Estado</th>
+              <th class="border border-gray-300 px-4 py-2">Departamento</th>
+              <th class="border border-gray-300 px-4 py-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="appointment-list" class="text-gray-700">
+            <!-- Rows will be dynamically populated -->
+          </tbody>
+        </table>
       </div>
-    </div>
+    </section>
   </main>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const appointmentsTable = document.getElementById("appointments-table");
-      const modal = document.getElementById("appointment-modal");
-      const form = document.getElementById("appointment-form") as HTMLFormElement;
-      const closeModalBtn = document.getElementById("close-modal");
-      const addAppointmentBtn = document.getElementById("add-appointment");
-      const modalTitle = document.getElementById("modal-title");
+    const appointments = [
+      { id: 1, name: 'Juan Pérez', type: 'regular', status: 'estable', department: 'Cardiología' },
+      { id: 2, name: 'Ana Gómez', type: 'emergency', status: 'critico', department: 'Neurología' },
+    ];
 
-      let appointments = [
-        {
-          id: 1,
-          patientName: "John Doe",
-          doctor: "Dr. Smith",
-          department: "Cardiología",
-          dateTime: "2024-11-21T09:00",
-          status: "Programado",
-        },
-        {
-          id: 2,
-          patientName: "Jane Roe",
-          doctor: "Dr. Jones",
-          department: "Ortopedia",
-          dateTime: "2024-12-22T11:30",
-          status: "Completado",
-        },
-      ];
-      let editMode = false;
-      let editId = null;
+    const appointmentList = document.getElementById('appointment-list');
 
-      const renderAppointments = () => {
-        appointmentsTable.innerHTML = "";
-        appointments.forEach((appointment) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td class="px-4 py-2">${appointment.patientName}</td>
-            <td class="px-4 py-2">${appointment.doctor}</td>
-            <td class="px-4 py-2">${appointment.department}</td>
-            <td class="px-4 py-2">${appointment.dateTime}</td>
-            <td class="px-4 py-2">${appointment.status}</td>
-            <td class="px-4 py-2 text-center">
-              <button 
-                data-id="${appointment.id}" 
-                class="edit-btn px-2 py-1 bg-yellow-500 text-white rounded-md"
-              >
-                Editar
-              </button>
-              <button 
-                data-id="${appointment.id}" 
-                class="delete-btn px-2 py-1 bg-red-500 text-white rounded-md"
-              >
-                Eliminar
-              </button>
-            </td>
-          `;
-          appointmentsTable.appendChild(row);
-        });
-      };
-
-      const openModal = (appointment = null) => {
-        modal.classList.remove("hidden");
-        if (appointment) {
-          modalTitle.textContent = "Editar Cita";
-          form["patient-name"].value = appointment.patientName;
-          form["doctor"].value = appointment.doctor;
-          form["department"].value = appointment.department;
-          form["appointment-time"].value = appointment.dateTime;
-          form["status"].value = appointment.status;
-          editMode = true;
-          editId = appointment.id;
-        } else {
-          modalTitle.textContent = "Añadir Cita";
-          form.reset();
-          editMode = false;
-          editId = null;
-        }
-      };
-
-      const closeModal = () => {
-        modal.classList.add("hidden");
-        form.reset();
-      };
-
-      const saveAppointment = (e) => {
-        e.preventDefault();
-        const newAppointment = {
-          id: editMode ? editId : new Date().getTime(),
-          patientName: form["patient-name"].value,
-          doctor: form["doctor"].value,
-          department: form["department"].value,
-          dateTime: form["appointment-time"].value,
-          status: form["status"].value,
-        };
-
-        if (editMode) {
-          appointments = appointments.map((appointment) =>
-            appointment.id === editId ? newAppointment : appointment
-          );
-        } else {
-          appointments.push(newAppointment);
-        }
-        renderAppointments();
-        closeModal();
-      };
-
-      const deleteAppointment = (id) => {
-        appointments = appointments.filter((appointment) => appointment.id !== id);
-        renderAppointments();
-      };
-
-      appointmentsTable.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement;
-        const id = parseInt(target.dataset.id);
-        if (target.classList.contains("edit-btn")) {
-          const appointment = appointments.find((appt) => appt.id === id);
-          openModal(appointment);
-        } else if (target.classList.contains("delete-btn")) {
-          if (confirm("¿Está seguro de eliminar esta cita?")) {
-            deleteAppointment(id);
-          }
-        }
+    function renderAppointments(filteredAppointments) {
+      appointmentList.innerHTML = '';
+      filteredAppointments.forEach((appointment) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="border border-gray-300 px-4 py-2">${appointment.id}</td>
+          <td class="border border-gray-300 px-4 py-2">${appointment.name}</td>
+          <td class="border border-gray-300 px-4 py-2">${appointment.type}</td>
+          <td class="border border-gray-300 px-4 py-2">${appointment.status}</td>
+          <td class="border border-gray-300 px-4 py-2">${appointment.department}</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <button class="text-blue-500 hover:underline edit-btn" data-id="${appointment.id}">Editar</button>
+            <button class="text-red-500 hover:underline delete-btn" data-id="${appointment.id}">Eliminar</button>
+          </td>
+        `;
+        appointmentList.appendChild(row);
       });
 
-      form.addEventListener("submit", saveAppointment);
-      closeModalBtn.addEventListener("click", closeModal);
-      addAppointmentBtn.addEventListener("click", () => openModal());
+      document.querySelectorAll('.edit-btn').forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+          const id = event.target.dataset.id;
+          alert(`Editar cita con ID: ${id}`);
+        });
+      });
 
-      renderAppointments();
+      document.querySelectorAll('.delete-btn').forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+          const id = event.target.dataset.id;
+          const index = appointments.findIndex((a) => a.id == id);
+          if (index > -1) {
+            appointments.splice(index, 1);
+            renderAppointments(appointments);
+          }
+        });
+      });
+    }
+
+    document.getElementById('apply-filters').addEventListener('click', () => {
+      const searchName = document.getElementById('search-name').value.toLowerCase();
+      const filterType = document.getElementById('filter-type').value;
+      const filterStatus = document.getElementById('filter-status').value;
+      const filterDepartment = document.getElementById('filter-department').value;
+
+      const filtered = appointments.filter((appointment) => {
+        return (
+          (searchName === '' || appointment.name.toLowerCase().includes(searchName)) &&
+          (filterType === '' || appointment.type === filterType) &&
+          (filterStatus === '' || appointment.status === filterStatus) &&
+          (filterDepartment === '' || appointment.department === filterDepartment)
+        );
+      });
+
+      renderAppointments(filtered);
     });
+
+    // Sidebar Navigation
+    document.getElementById('inicio').addEventListener('click', () => {
+      window.location.href = '/Views/GeneralReceptionist';
+    });
+    document.getElementById('citas').addEventListener('click', () => {
+      window.location.href = 'Views/GeneralReceptionist?section=createAppointment';    });
+
+    // Initial render
+    renderAppointments(appointments);
   </script>
 </Layout>

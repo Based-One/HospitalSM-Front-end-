@@ -1,0 +1,284 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Vista Recepcionista General">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
+      <div class="flex flex-col items-center space-y-4">
+        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+      </div>
+      <nav class="space-y-6 text-center">
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="inicio">
+          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+          <span>Inicio</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="citas">
+          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
+          <span>Citas</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="gestion">
+          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
+          <span>Gestión</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="flex-grow p-8 bg-white" id="mainContent">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 id="receptionist-name" class="text-2xl font-semibold">Loading...</h2>
+          <p id="receptionist-role" class="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+
+      <!-- Buttons Section -->
+      <div id="buttonSection" class="space-y-4">
+        <button
+          id="agendar-cita"
+          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
+        >
+          Agendar Cita
+        </button>
+        <button
+          id="buscar-cita"
+          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
+        >
+          Citas
+        </button>
+      </div>
+
+      <!-- Create Appointment Form -->
+      <div id="createAppointment" class="hidden space-y-4 bg-gray-50 p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Crear cita</h1>
+        <form id="createAppointmentForm" class="space-y-4">
+          <!-- Tipo de cita -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cita</label>
+            <div class="flex space-x-4">
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  name="appointmentType"
+                  value="regular"
+                  class="mr-2"
+                  checked
+                />
+                Regular
+              </label>
+              <label class="flex items-center">
+                <input type="radio" name="appointmentType" value="emergency" class="mr-2" />
+                Emergencia
+              </label>
+            </div>
+          </div>
+
+          <!-- Paciente -->
+          <div id="patientSection">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Paciente</label>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input type="radio" name="patientType" value="new" class="mr-2" checked />
+                Nuevo Paciente
+              </label>
+              <label class="flex items-center">
+                <input type="radio" name="patientType" value="id" class="mr-2" />
+                Buscar por ID
+              </label>
+              <label class="flex items-center">
+                <input type="radio" name="patientType" value="gob-id" class="mr-2" />
+                Buscar por Gob ID
+              </label>
+              <div id="searchFields" class="hidden">
+                <input
+                  type="text"
+                  id="searchValue"
+                  class="mt-2 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Ingrese ID o Gob ID"
+                />
+                <button
+                  type="button"
+                  id="searchPatient"
+                  class="mt-2 w-full py-2 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Fields -->
+          <div id="dynamicFields">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
+              <input
+                type="text"
+                id="surname"
+                name="surname"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <!-- Estado Field (For Emergency) -->
+          <div id="estadoField" class="hidden">
+            <label for="estado" class="block text-sm font-medium text-gray-700">Estado:</label>
+            <select
+              id="estado"
+              name="estado"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="critico">Crítico</option>
+              <option value="estable">Estable</option>
+            </select>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="w-full py-2 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
+          >
+            Crear
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const createAppointmentBtn = document.getElementById("agendar-cita");
+    const createAppointmentSection = document.getElementById("createAppointment");
+    const buttonSection = document.getElementById("buttonSection");
+    const patientTypeRadios = document.querySelectorAll('input[name="patientType"]');
+    const appointmentTypeRadios = document.querySelectorAll('input[name="appointmentType"]');
+    const searchFields = document.getElementById("searchFields");
+    const searchPatientButton = document.getElementById("searchPatient");
+    const searchValueInput = document.getElementById("searchValue");
+    const estadoField = document.getElementById("estadoField");
+    const buscarcitaBtn = document.getElementById("buscar-cita");
+    buscarcitaBtn.addEventListener("click", () =>{
+
+
+
+      
+    })
+    // Show appointment form when clicking "Agendar Cita"
+    createAppointmentBtn.addEventListener("click", () => {
+      buttonSection.classList.add("hidden");
+      createAppointmentSection.classList.remove("hidden");
+    });
+
+    // Update form fields based on patient type
+    patientTypeRadios.forEach((radio) => {
+  radio.addEventListener("change", (event) => {
+    const dynamicFields = document.getElementById("dynamicFields");
+    const searchFields = document.getElementById("searchFields"); // Ensure this element is defined
+    if (event.target instanceof HTMLInputElement) { // Check if the target is an HTMLInputElement
+      if (event.target.value === "new") {
+        searchFields.classList.add("hidden");
+        dynamicFields.innerHTML = `
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
+            <input
+              type="text"
+              id="surname"
+              name="surname"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        `;
+      } else {
+        searchFields.classList.remove("hidden");
+        dynamicFields.innerHTML = ""; // Clear dynamic fields when not "new"
+      }
+    }
+  });
+});
+
+
+    // Show/Hide emergency-specific fields
+    appointmentTypeRadios.forEach((radio) => {
+  radio.addEventListener("change", (event) => {
+    if (event.target instanceof HTMLInputElement) {
+      if (event.target.value === "emergency") {
+        estadoField.classList.remove("hidden");
+      } else {
+        estadoField.classList.add("hidden");
+      }
+    }
+  });
+});
+
+
+    // Search and autofill patient data
+    searchPatientButton.addEventListener("click", async () => {
+      const searchValue = (searchValueInput as HTMLInputElement).value.trim();
+      if (!searchValue) {
+        alert("Por favor, ingrese un valor para buscar.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/patients/${searchValue}`);
+        if (!response.ok) {
+          throw new Error("Paciente no encontrado.");
+        }
+        const patient = await response.json();
+
+        // Autofill fields
+        document.getElementById("dynamicFields").innerHTML = `
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              value="${patient.name}"
+              readonly
+            />
+          </div>
+          <div>
+            <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
+            <input
+              type="text"
+              id="surname"
+              name="surname"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              value="${patient.surname}"
+              readonly
+            />
+          </div>
+        `;
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+    document.getElementById("submit").addEventListener("click",async()=>{
+
+
+
+    })
+  </script>
+</Layout>
