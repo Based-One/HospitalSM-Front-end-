@@ -1,0 +1,253 @@
+---
+// Import Layout
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Crear Cita">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
+      <nav class="space-y-6 text-center">
+        <button
+          id="back"
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full"
+        >
+          <i class="fas fa-arrow-left w-6 h-6"></i>
+          <span>Volver</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="flex-grow p-8 bg-white">
+      <h1 class="text-2xl font-bold mb-4">Crear Cita</h1>
+      <form id="createAppointmentForm" class="space-y-6">
+        <!-- Tipo de cita -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cita</label>
+          <div class="flex space-x-4">
+            <label class="flex items-center">
+              <input type="radio" name="appointmentType" value="regular" class="mr-2" checked />
+              Regular
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="appointmentType" value="emergency" class="mr-2" />
+              Emergencia
+            </label>
+          </div>
+        </div>
+
+        <!-- Paciente -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Paciente</label>
+          <div class="space-y-2">
+            <label class="flex items-center">
+              <input type="radio" name="patientType" value="new" class="mr-2" checked />
+              Nuevo Paciente
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="patientType" value="id" class="mr-2" />
+              Buscar por ID
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="patientType" value="gob-id" class="mr-2" />
+              Buscar por Gob ID
+            </label>
+          </div>
+        </div>
+
+        <!-- Patient Fields -->
+        <div id="patientFields" class="space-y-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos</label>
+            <input
+              type="text"
+              id="surname"
+              name="surname"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label for="gobId" class="block text-sm font-medium text-gray-700">Gob ID (CURP)</label>
+            <input
+              type="text"
+              id="gobId"
+              name="gobId"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label for="age" class="block text-sm font-medium text-gray-700">Edad</label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700">Número telefónico</label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Appointment Details -->
+        <div>
+          <label for="reason" class="block text-sm font-medium text-gray-700">Razón</label>
+          <select
+            id="reason"
+            name="reason"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          >
+            <option value="" disabled selected>Seleccione un departamento</option>
+          </select>
+        </div>
+        <div>
+          <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
+          <input
+            type="datetime-local"
+            id="appointmentDate"
+            name="appointmentDate"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+
+        <!-- Doctor -->
+        <div>
+          <label for="doctor" class="block text-sm font-medium text-gray-700">Médico</label>
+          <select
+            id="doctor"
+            name="doctor"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            disabled
+            required
+          >
+            <option value="">Seleccione un médico</option>
+          </select>
+        </div>
+
+        <!-- Room -->
+        <div>
+          <label for="room" class="block text-sm font-medium text-gray-700">Consultorio</label>
+          <input
+            type="checkbox"
+            id="room"
+            name="room"
+            class="mt-1 block w-6 h-6"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          id="create-appointment"
+          class="w-full py-2 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
+        >
+          Crear
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const reasonSelect = document.getElementById('reason');
+    const doctorSelect = document.getElementById('doctor');
+    const createAppointment = document.getElementById('create-appointment');
+
+    // Populate the reason dropdown with departments
+    async function populateDepartments() {
+      try {
+        const response = await fetch('http://localhost:8080/reasons');
+        if (!response.ok) throw new Error('Error fetching departments.');
+        const departments = await response.json();
+
+        departments.forEach((department) => {
+          const option = document.createElement('option');
+          option.value = department.id; // Assuming the department has an `id` field
+          option.textContent = department.name; // Assuming the department has a `name` field
+          reasonSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading departments:', error);
+        alert('Error al cargar los departamentos. Intente de nuevo.');
+      }
+    }
+
+    // Populate the doctor dropdown based on the selected department
+    async function populateDoctors(departmentId) {
+      try {
+        // Clear existing doctors
+        doctorSelect.innerHTML = '<option value="">Seleccione un médico</option>';
+
+        if (!departmentId) {
+          doctorSelect.disabled = true;
+          return;
+        }
+
+        const response = await fetch(`http://localhost:8080/doctors?departmentId=${departmentId}`);
+        if (!response.ok) throw new Error('Error fetching doctors.');
+        const doctors = await response.json();
+
+        doctors.forEach((doctor) => {
+          const option = document.createElement('option');
+          option.value = doctor.id; // Assuming the doctor has an `id` field
+          option.textContent = doctor.name; // Assuming the doctor has a `name` field
+          doctorSelect.appendChild(option);
+        });
+
+        doctorSelect.disabled = false;
+      } catch (error) {
+        console.error('Error loading doctors:', error);
+        alert('Error al cargar los médicos. Intente de nuevo.');
+      }
+    }
+
+    // Event listener for department change
+    reasonSelect.addEventListener('change', (event) => {
+      const departmentId = event.target.value;
+      populateDoctors(departmentId);
+    });
+
+    // Call the function to populate the department dropdown
+    populateDepartments();
+    async function CreateAppointment() {
+      try{
+      const response = await fetch(`http://localhost:8080/appointments`, {
+        method:"POST"
+
+
+      }
+      if(!response.ok){
+        throw new Error('Error fetching creating appointment');
+      }
+
+    }
+    createAppointment.onsubmit = ()=>{
+      
+
+
+
+    }
+  </script> 
+</Layout>

@@ -13,24 +13,7 @@ import Layout from "../../layouts/Layout.astro"
     </div>
 
     <!-- Navigation -->
-    <nav class="space-y-6 text-center">
-      <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-        <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
-        <span>Inicio</span>
-      </button>
-      <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-        <img src="/icons/search-icon.svg" alt="Buscar Paciente" class="w-6 h-6" />
-        <span>Buscar Paciente</span>
-      </button>
-      <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-        <img src="/icons/clipboard-icon.svg" alt="Expedientes" class="w-6 h-6" />
-        <span>Expedientes</span>
-      </button>
-      <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full">
-        <img src="/icons/calendar-icon.svg" alt="Calendario" class="w-6 h-6" />
-        <span>Calendario</span>
-      </button>
-    </nav>
+   
   </aside>
 
   <!-- Main Content -->
@@ -41,21 +24,18 @@ import Layout from "../../layouts/Layout.astro"
         <h2 id="doctor-name" class="text-2xl font-semibold">Loading...</h2>
         <p id="doctor-role" class="text-gray-600">Cargando...</p>
       </div>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-        + Crear Expediente
-      </button>
     </div>
 
     <!-- Buttons Section -->
     <div class="space-y-4">
-      <button class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
+      <button id="create-prescription" class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
         Realizar Receta
       </button>
-      <button class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
-        Buscar Paciente
+      <button id="consult-record" class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
+        Consultar Expediente
       </button>
-      <button class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
-        Crear Expediente
+      <button id="update-diagnosis" class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
+        Actualizar diagnóstico
       </button>
     </div>
   </section>
@@ -76,6 +56,16 @@ import Layout from "../../layouts/Layout.astro"
     }
 
     fetchDoctorData();
+    document.getElementById("consult-record").addEventListener("click", (event)=>{
+      window.location.href="../Record";});
+    document.getElementById("create-prescription").addEventListener("click",(event)=>{
+      window.location.href="../Prescription";
+
+
+    });
+
+
+    
   </script>
 </main>
 

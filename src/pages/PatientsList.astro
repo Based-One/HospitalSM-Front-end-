@@ -1,0 +1,200 @@
+---
+// Import Layout
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout title="Listado de Pacientes">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
+      <div class="flex flex-col items-center space-y-4">
+        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+      </div>
+      <nav class="space-y-6 text-center">
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="inicio">
+          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+          <span>Inicio</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="agendar-cita">
+          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
+          <span>Agendar Cita</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="gestion">
+          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
+          <span>Gestión de Citas</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="flex-grow p-8 bg-white">
+      <!-- Search Section -->
+      <div class="flex space-x-4 mb-8">
+        <input
+          type="text"
+          id="doctor-id"
+          name="doctor-id"
+          class="border border-gray-300 rounded-lg px-4 py-2"
+          placeholder="Buscar doctor: [ID]"
+        />
+        <button
+          id="search-doctor"
+          class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+        >
+          Buscar
+        </button>
+      </div>
+
+      <!-- Table Section -->
+      <div id="patients-table-container" class="hidden">
+        <h2 class="text-xl font-semibold mb-4">Pacientes atendidos o programados</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse border border-gray-300 text-left">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="border border-gray-300 px-4 py-2">ID Paciente</th>
+                <th class="border border-gray-300 px-4 py-2">Nombre</th>
+                <th class="border border-gray-300 px-4 py-2">Fecha</th>
+                <th class="border border-gray-300 px-4 py-2">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="patients-table">
+              <!-- Data will be dynamically inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- <script>
+        // Mock Data for Testing
+        const mockValidateDoctorResponse = { valid: true };
+        const mockPatientsData = [
+          {
+            id: "P12345",
+            name: "John Doe",
+            date: "2024-11-30",
+            status: "Programado",
+          },
+          {
+            id: "P67890",
+            name: "Jane Smith",
+            date: "2024-11-29",
+            status: "Completado",
+          },
+        ];
+      
+        async function fetchPatients() {
+          const doctorId = document.getElementById('doctor-id').value;
+      
+          if (!doctorId) {
+            alert('Por favor, ingrese un ID de doctor.');
+            return;
+          }
+      
+          try {
+            // Simulate API response for validating doctor
+            const validateDoctorResponse = await new Promise((resolve) =>
+              setTimeout(() => resolve(mockValidateDoctorResponse), 500) // Mock delay
+            );
+      
+            if (!validateDoctorResponse.valid) {
+              alert('ID de doctor o relación con el recepcionista no válida.');
+              return;
+            }
+      
+            // Simulate API response for fetching patients
+            const patientsData = await new Promise((resolve) =>
+              setTimeout(() => resolve(mockPatientsData), 500) // Mock delay
+            );
+      
+            // Populate the table with patients
+            const tableContainer = document.getElementById('patients-table-container');
+            const tableBody = document.getElementById('patients-table');
+            tableBody.innerHTML = ''; // Clear previous data
+      
+            if (patientsData.length > 0) {
+              patientsData.forEach((patient) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td class="border border-gray-300 px-4 py-2">${patient.id || 'N/A'}</td>
+                  <td class="border border-gray-300 px-4 py-2">${patient.name || 'N/A'}</td>
+                  <td class="border border-gray-300 px-4 py-2">${patient.date || 'N/A'}</td>
+                  <td class="border border-gray-300 px-4 py-2">${patient.status || 'N/A'}</td>
+                `;
+                tableBody.appendChild(row);
+              });
+            } else {
+              tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-4">No hay pacientes registrados.</td></tr>`;
+            }
+      
+            tableContainer.classList.remove('hidden');
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            alert('Hubo un error al buscar los pacientes.');
+          }
+        }
+      
+        document.getElementById('search-doctor').addEventListener('click', fetchPatients);
+      </script> -->
+      
+    <!-- Script -->
+     <script>
+        const inicioBtn = document.getElementById('inicio') as HTMLElement;
+        const citasBtn = document.getElementById('agendar-cita') as HTMLElement;
+        const gestionBtn = document.getElementById('gestion') as HTMLElement;
+        inicioBtn.onclick =() => window.location.href ="/Views/PersonalReceptionist";
+        citasBtn.onclick = () => window.location.href = "/Views/PersonalReceptionist?section=createAppointment";
+        gestionBtn.onclick = () => window.location.href = "/AppointmentManagement"
+      async function fetchPatients() {
+        const doctorId = document.getElementById('doctor-id').value;
+
+        if (!doctorId) {
+          alert('Por favor, ingrese un ID de doctor.');
+          return;
+        }
+
+        try {
+          // Call the backend API to validate doctor and receptionist relationship
+          const response = await fetch(`/api/validate-doctor/${doctorId}`, { method: 'GET' }); // Replace with actual API
+          const data = await response.json();
+
+          if (!data.valid) {
+            alert('ID de doctor o relación con el recepcionista no válida.');
+            return;
+          }
+
+          // If valid, fetch patients for this doctor
+          const patientsResponse = await fetch(`/api/patients/${doctorId}`, { method: 'GET' }); // Replace with actual API
+          const patientsData = await patientsResponse.json();
+
+          // Populate the table with patients
+          const tableContainer = document.getElementById('patients-table-container');
+          const tableBody = document.getElementById('patients-table');
+          tableBody.innerHTML = ''; // Clear previous data
+
+          if (patientsData.length > 0) {
+            patientsData.forEach((patient) => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td class="border border-gray-300 px-4 py-2">${patient.id || 'N/A'}</td>
+                <td class="border border-gray-300 px-4 py-2">${patient.name || 'N/A'}</td>
+                <td class="border border-gray-300 px-4 py-2">${patient.date || 'N/A'}</td>
+                <td class="border border-gray-300 px-4 py-2">${patient.status || 'N/A'}</td>
+              `;
+              tableBody.appendChild(row);
+            });
+          } else {
+            tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-4">No hay pacientes registrados.</td></tr>`;
+          }
+
+          tableContainer.classList.remove('hidden');
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          alert('Hubo un error al buscar los pacientes.');
+        }
+      }
+
+      document.getElementById('search-doctor').addEventListener('click', fetchPatients);
+    </script> 
+  </main>
+</Layout>

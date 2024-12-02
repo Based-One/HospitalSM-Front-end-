@@ -3,359 +3,95 @@ import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout title="Vista Recepcionista General">
+  <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
   <main class="flex min-h-screen bg-gray-100">
     <!-- Sidebar -->
     <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
       <div class="flex flex-col items-center space-y-4">
-        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+        <i class="fas fa-heart-pulse text-white-700 text-3xl mr-2"></i>
+        <h2 class="text-3xl font-bold text-white-500"> HospitalSM</h2>
       </div>
-      <nav class="space-y-6 text-center">
-        <button
-          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
-          id="inicio"
-        >
-          <i class="fas fa-home w-6 h-6"></i>
-          <span>Inicio</span>
-        </button>
-        <button
-          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
-          id="citas"
-        >
-          <i class="fas fa-calendar-alt w-6 h-6"></i>
-          <span>Citas</span>
-        </button>
-        <button
-          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
-          id="gestion"
-        >
-          <i class="fas fa-edit w-6 h-6"></i>
-          <span>Gestión</span>
-        </button>
-      </nav>
     </aside>
 
     <!-- Main Content -->
-    <section class="flex-grow p-8 bg-white" id="mainContent">
-      <!-- Header -->
+    <section
+      class="flex-grow p-8 bg-white transition-opacity duration-500 ease-in-out opacity-100"
+      id="mainContent"
+    >
       <header class="flex justify-between items-center mb-6">
         <div>
-          <h2 id="receptionist-name" class="text-2xl font-semibold">Loading...</h2>
-          <p id="receptionist-role" class="text-gray-600">Cargando...</p>
+          <h2 id="receptionist-name" class="text-2xl font-semibold">Loading....</h2>
+          <p id="receptionist-role" class="text-gray-600">Cargando datos...</p>
+          
         </div>
       </header>
 
       <!-- Buttons Section -->
-      <div id="buttonSection" class="space-y-4">
-        <button
-          id="agendar-cita"
-          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
-        >
-          Agendar Cita
-        </button>
+      <div class="space-y-4">
         <button
           id="buscar-cita"
-          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
+          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 text-3xl hover:bg-blue-600"
         >
-          Citas
+        <i class="fa-regular fa-calendar-check text-3xl"></i>
+          Ver Citas
         </button>
-      </div>
-
-      <!-- Create Appointment Form -->
-      <div id="createAppointment" class="hidden space-y-4 bg-gray-50 p-6 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">Crear cita</h1>
-        <form id="createAppointmentForm" class="space-y-4">
-          <!-- Tipo de cita -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cita</label>
-            <div class="flex space-x-4">
-              <label class="flex items-center">
-                <input
-                  type="radio"
-                  name="appointmentType"
-                  value="regular"
-                  class="mr-2"
-                  checked
-                />
-                Regular
-              </label>
-              <label class="flex items-center">
-                <input type="radio" name="appointmentType" value="emergency" class="mr-2" />
-                Emergencia
-              </label>
-            </div>
-          </div>
-
-          <!-- Paciente -->
-          <div id="patientSection">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Paciente</label>
-            <div class="space-y-2">
-              <label class="flex items-center">
-                <input type="radio" name="patientType" value="new" class="mr-2" checked />
-                Nuevo Paciente
-              </label>
-              <label class="flex items-center">
-                <input type="radio" name="patientType" value="id" class="mr-2" />
-                Buscar por ID
-              </label>
-              <label class="flex items-center">
-                <input type="radio" name="patientType" value="gob-id" class="mr-2" />
-                Buscar por Gob ID
-              </label>
-              <div id="searchFields" class="hidden">
-                <input
-                  type="text"
-                  id="searchValue"
-                  class="mt-2 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Ingrese ID o Gob ID"
-                />
-                <button
-                  type="button"
-                  id="searchPatient"
-                  class="mt-2 w-full py-2 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600"
-                >
-                  Buscar
-                </button>
-              </div>
-            </div>
-          </div>
-
-            <!-- Dynamic Fields -->
-            <div id="dynamicFields">
-              <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
-                <input type="text" id="name" name="name" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
-                <input type="text" id="surname" name="surname" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="gobID" class="block text-sm font-medium text-gray-700">GobID (CURP):</label>
-                <input type="text" id="gobID" name="gobID" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="age" class="block text-sm font-medium text-gray-700">Edad:</label>
-                <input type="number" id="age" name="age" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700">Número Telefónico:</label>
-                <input type="tel" id="phone" name="phone" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="reason" class="block text-sm font-medium text-gray-700">Razón:</label>
-                <input type="text" id="reason" name="reason" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Fecha de Cita:</label>
-                <input type="datetime-local" id="appointmentDate" name="appointmentDate" class="mt-1 block w-full" />
-              </div>
-              <div>
-                <label for="doctor" class="block text-sm font-medium text-gray-700">Médico:</label>
-                <select id="doctor" name="doctor" class="mt-1 block w-full">
-                  <option value="">Auto Asignar</option>
-                  <option value="pedro">Pedro</option>
-                  <option value="maria">Maria</option>
-                </select>
-              </div>
-              <div>
-                <label for="consultorio" class="block text-sm font-medium text-gray-700">Consultorio:</label>
-                <input type="checkbox" id="consultorio" name="consultorio" class="mt-2" />
-              </div>
-            </div>
-
-          <!-- Estado Field (For Emergency) -->
-          <div id="estadoField" class="hidden">
-            <label for="estado" class="block text-sm font-medium text-gray-700">Estado:</label>
-            <select
-              id="estado"
-              name="estado"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="critico">Crítico</option>
-              <option value="estable">Estable</option>
-            </select>
-          </div>
-
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            class="w-full py-2 bg-blue-500 text-white font-medium rounded-md shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
-          >
-            Crear
-          </button>
-        </form>
+        <button
+          id="agendar-cita"
+          class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left text-3xl px-4 hover:bg-blue-600"
+        ><i class="fa-solid fa-pen text-white-500 text-3xl mr-2"></i>
+        Agendar Cita
+        </button>
       </div>
     </section>
   </main>
 
   <script>
-    const sidebarButtons = {
-      inicio: document.getElementById('inicio'),
-      citas: document.getElementById('citas'),
-      gestion: document.getElementById('gestion'),
-    };
-  
-    // Toggle visibility for sidebar buttons
-    function toggleSidebarVisibility(visibleButtons = []) {
-      Object.values(sidebarButtons).forEach((btn) => {
-        btn.classList.add('hidden');
-      });
-  
-      visibleButtons.forEach((id) => {
-        if (sidebarButtons[id]) {
-          sidebarButtons[id].classList.remove('hidden');
-        }
-      });
-    }
-  
-    // Detect Query Parameter for Section Navigation
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
-  
-    const section = getQueryParam('section');
-    if (section === 'createAppointment') {
-      document.getElementById('buttonSection').classList.add('hidden');
-      document.getElementById('createAppointment').classList.remove('hidden');
-      toggleSidebarVisibility(['inicio', 'gestion']);
-    } else {
-      document.getElementById('buttonSection').classList.remove('hidden');
-      document.getElementById('createAppointment').classList.add('hidden');
-      toggleSidebarVisibility(['inicio', 'citas', 'gestion']);
-    }
-  
-    const createAppointmentBtn = document.getElementById("agendar-cita");
-    const buscarCitaBtn = document.getElementById("buscar-cita");
-    const gestionBtn = document.getElementById("gestion");
-    const inicioBtn = document.getElementById("inicio");
-    const buttonSection = document.getElementById("buttonSection");
-    const createAppointmentSection = document.getElementById("createAppointment");
-  
-    createAppointmentBtn.addEventListener("click", () => {
-      buttonSection.classList.add("hidden");
-      createAppointmentSection.classList.remove("hidden");
-      toggleSidebarVisibility(["inicio", "gestion"]);
-    });
-  
-    buscarCitaBtn.addEventListener("click", () => {
-      buttonSection.classList.add("hidden");
-      createAppointmentSection.classList.add("hidden");
-      toggleSidebarVisibility(["inicio", "gestion"]);
-      window.location.href = "../AppointmentManagement";
-    });
-  
-    gestionBtn.addEventListener("click", () => {
-      window.location.href = "../AppointmentManagement";
-    });
-  
-    inicioBtn.addEventListener("click", () => {
-      window.location.href = "/Views/GeneralReceptionist";
-    });
-  
-    // Logic for handling patient type selection
-    document.querySelectorAll('input[name="patientType"]').forEach((radio) => {
-      radio.addEventListener("change", (event) => {
-        const dynamicFields = document.getElementById("dynamicFields");
-        const searchFields = document.getElementById("searchFields");
-  
-        if (event.target.value === "new") {
-          searchFields.classList.add("hidden");
-          dynamicFields.innerHTML = `
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
-              <input type="text" id="name" name="name" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
-              <input type="text" id="surname" name="surname" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="gobID" class="block text-sm font-medium text-gray-700">GobID (CURP):</label>
-              <input type="text" id="gobID" name="gobID" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="age" class="block text-sm font-medium text-gray-700">Edad:</label>
-              <input type="number" id="age" name="age" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700">Número Telefónico:</label>
-              <input type="tel" id="phone" name="phone" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="reason" class="block text-sm font-medium text-gray-700">Razón:</label>
-              <input type="text" id="reason" name="reason" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Fecha de Cita:</label>
-              <input type="datetime-local" id="appointmentDate" name="appointmentDate" class="mt-1 block w-full" />
-            </div>
-            <div>
-              <label for="doctor" class="block text-sm font-medium text-gray-700">Médico:</label>
-              <select id="doctor" name="doctor" class="mt-1 block w-full">
-                <option value="">Auto Asignar</option>
-                <option value="pedro">Pedro</option>
-                <option value="maria">Maria</option>
-              </select>
-            </div>
-            <div>
-              <label for="consultorio" class="block text-sm font-medium text-gray-700">Consultorio:</label>
-              <input type="checkbox" id="consultorio" name="consultorio" class="mt-2" />
-            </div>`;
-        } else {
-          searchFields.classList.remove("hidden");
-          dynamicFields.innerHTML = ""; // Clear dynamic fields
-        }
-      });
-    });
-  
-    // Show/Hide Emergency Field
-    document.querySelectorAll('input[name="appointmentType"]').forEach((radio) => {
-      radio.addEventListener("change", (event) => {
-        const estadoField = document.getElementById("estadoField");
-        estadoField.classList.toggle("hidden", event.target.value !== "emergency");
-      });
-    });
-  
-    // Submit Form and Send Data to Backend
-    document.getElementById("createAppointmentForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-  
-      const formData = new FormData(event.target);
-      const data = {
-        appointmentType: formData.get("appointmentType"),
-        patientType: formData.get("patientType"),
-        name: formData.get("name"),
-        surname: formData.get("surname"),
-        gobID: formData.get("gobID"),
-        age: formData.get("age"),
-        phone: formData.get("phone"),
-        reason: formData.get("reason"),
-        appointmentDate: formData.get("appointmentDate"),
-        doctor: formData.get("doctor"),
-        consultorio: formData.get("consultorio") === "on",
-      };
-  
+    // Fetch receptionist data
+    async function fetchReceptionistData() {
       try {
-        const response = await fetch("/api/appointments", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-  
-        if (!response.ok) throw new Error("Error al crear la cita");
-  
-        alert("Cita creada exitosamente!");
-        event.target.reset();
+        const response = await fetch('/api/receptionist');
+        if (!response.ok) throw new Error('Failed to fetch receptionist info');
+
+        const data = await response.json();
+        document.getElementById('receptionist-name').textContent = data.name || 'Nombre no disponible';
+        document.getElementById('receptionist-role').textContent = data.role || 'Rol no disponible';
       } catch (error) {
         console.error(error);
-        alert("Error al enviar los datos. Por favor, intente de nuevo.");
+        document.getElementById('receptionist-name').textContent = 'Error al cargar datos';
+        document.getElementById('receptionist-role').textContent = '';
       }
+    }
+
+    // Navigation logic
+    function setupNavigation() {
+      const buscarCitaButton = document.getElementById('buscar-cita');
+      const agendarCitaButton = document.getElementById('agendar-cita');
+
+      buscarCitaButton.addEventListener('click', () => {
+        const mainContent = document.getElementById('mainContent');
+        mainContent.classList.add('opacity-0'); // Start fade-out transition
+        setTimeout(() => {
+          window.location.href = '../AppointmentManagement'; // Replace with actual route
+        }, 500); // Matches transition duration
+      });
+
+      agendarCitaButton.addEventListener('click', () => {
+        const mainContent = document.getElementById('mainContent');
+        mainContent.classList.add('opacity-0'); // Start fade-out transition
+        setTimeout(() => {
+          window.location.href = '../CreateAppointment'; // Replace with actual route
+        }, 500); // Matches transition duration
+      });
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchReceptionistData();
+      setupNavigation();
     });
   </script>
-  
-  
-
 </Layout>

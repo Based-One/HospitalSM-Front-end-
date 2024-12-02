@@ -3,52 +3,79 @@ import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout title="Vista Recepcionista General">
+  <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  rel="stylesheet"
+/>
   <main class="flex min-h-screen bg-gray-100">
     <!-- Sidebar -->
     <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
       <div class="flex flex-col items-center space-y-4">
-        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+        <i class="fas fa-heart-pulse text-white-500 text-3xl mr-2"></i>
+        <h1 class="text-3xl font-bold text-white-500">HospitalSM</h1>
       </div>
-      <nav class="space-y-6 text-center">
-        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="inicio">
-          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+      <!-- <nav class="space-y-6 text-center">
+        <button
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
+          id="inicio"
+        >
+          <i class="fas fa-home w-6 h-6"></i>
           <span>Inicio</span>
         </button>
-        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="citas">
-          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
-          <span>Citas</span>
+        <button
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
+          id="citas"
+        >
+          <i class="fas fa-calendar-alt w-6 h-6"></i>
+          <span>Agendar Cita
+          </span>
         </button>
-        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="gestion">
-          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
+        <button
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
+          id="gestion"
+        >
+          <i class="fas fa-edit w-6 h-6"></i>
           <span>Gestión</span>
         </button>
-      </nav>
+        <button
+          class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full hidden"
+          id="patients-list"
+        >
+          <i class="fas fa-edit w-6 h-6"></i>
+          <span>Listado de Pacientes</span>
+        </button>
+      </nav>  -->
     </aside>
 
     <!-- Main Content -->
     <section class="flex-grow p-8 bg-white" id="mainContent">
       <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
+      <header class="flex justify-between items-center mb-6">
         <div>
           <h2 id="receptionist-name" class="text-2xl font-semibold">Loading...</h2>
           <p id="receptionist-role" class="text-gray-600">Cargando...</p>
         </div>
-      </div>
+      </header>
 
       <!-- Buttons Section -->
       <div id="buttonSection" class="space-y-4">
         <button
-          id="agendar-cita"
+          id="create-appointment"
           class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
         >
           Agendar Cita
         </button>
         <button
-          id="buscar-cita"
+          id="appointments"
           class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600"
         >
           Citas
         </button>
+        <button
+        id="patients-list"
+        class="w-full bg-blue-500 text-white py-4 rounded-lg shadow-md text-left px-4 hover:bg-blue-600">
+        Listado de pacientes
+      </button>
       </div>
 
       <!-- Create Appointment Form -->
@@ -110,27 +137,49 @@ import Layout from '../../layouts/Layout.astro';
             </div>
           </div>
 
-          <!-- Dynamic Fields -->
-          <div id="dynamicFields">
-            <div>
-              <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              />
+            <!-- Dynamic Fields -->
+            <div id="dynamicFields">
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
+                <input type="text" id="name" name="name" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
+                <input type="text" id="surname" name="surname" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="gobID" class="block text-sm font-medium text-gray-700">GobID (CURP):</label>
+                <input type="text" id="gobID" name="gobID" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="age" class="block text-sm font-medium text-gray-700">Edad:</label>
+                <input type="number" id="age" name="age" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Número Telefónico:</label>
+                <input type="tel" id="phone" name="phone" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="reason" class="block text-sm font-medium text-gray-700">Razón:</label>
+                <input type="text" id="reason" name="reason" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Fecha de Cita:</label>
+                <input type="datetime-local" id="appointmentDate" name="appointmentDate" class="mt-1 block w-full" />
+              </div>
+              <div>
+                <label for="doctor" class="block text-sm font-medium text-gray-700">Médico:</label>
+                <select id="doctor" name="doctor" class="mt-1 block w-full">
+                  <option value="">Auto Asignar</option>
+                  <option value="pedro">Pedro</option>
+                  <option value="maria">Maria</option>
+                </select>
+              </div>
+              <div>
+                <label for="consultorio" class="block text-sm font-medium text-gray-700">Consultorio:</label>
+                <input type="checkbox" id="consultorio" name="consultorio" class="mt-2" />
+              </div>
             </div>
-            <div>
-              <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
-              <input
-                type="text"
-                id="surname"
-                name="surname"
-                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
 
           <!-- Estado Field (For Emergency) -->
           <div id="estadoField" class="hidden">
@@ -158,127 +207,173 @@ import Layout from '../../layouts/Layout.astro';
   </main>
 
   <script>
-    const createAppointmentBtn = document.getElementById("agendar-cita");
-    const createAppointmentSection = document.getElementById("createAppointment");
-    const buttonSection = document.getElementById("buttonSection");
-    const patientTypeRadios = document.querySelectorAll('input[name="patientType"]');
-    const appointmentTypeRadios = document.querySelectorAll('input[name="appointmentType"]');
-    const searchFields = document.getElementById("searchFields");
-    const searchPatientButton = document.getElementById("searchPatient");
-    const searchValueInput = document.getElementById("searchValue");
-    const estadoField = document.getElementById("estadoField");
-    const buscarcitaBtn = document.getElementById("buscar-cita");
-    buscarcitaBtn.addEventListener("click", () =>{
+    // const sidebarButtons = {
+    //   inicio: document.getElementById('inicio'),
+    //   citas: document.getElementById('citas'),
+    //   gestion: document.getElementById('gestion'),
+    // };
+  
+    // // Toggle visibility for sidebar buttons
+    // function toggleSidebarVisibility(visibleButtons = []) {
+    //   Object.values(sidebarButtons).forEach((btn) => {
+    //     btn.classList.add('hidden');
+    //   });
+  
+    //   visibleButtons.forEach((id) => {
+    //     if (sidebarButtons[id]) {
+    //       sidebarButtons[id].classList.remove('hidden');
+    //     }
+    //   });
+    // }
+  
+    // // Detect Query Parameter for Section Navigation
+    // function getQueryParam(param) {
+    //   const urlParams = new URLSearchParams(window.location.search);
+    //   return urlParams.get(param);
+    // }
+  
+    // const section = getQueryParam('section');
+    // if (section === 'createAppointment') {
+    //   document.getElementById('buttonSection').classList.add('hidden');
+    //   document.getElementById('createAppointment').classList.remove('hidden');
+    //   toggleSidebarVisibility(['inicio', 'gestion']);
+    // } else {
+    //   document.getElementById('buttonSection').classList.remove('hidden');
+    //   document.getElementById('createAppointment').classList.add('hidden');
+    //   toggleSidebarVisibility(['inicio', 'citas', 'gestion']);
+    // }
+  
+    const createAppointmentBtn = document.getElementById("create-appointment");
+    const viewAppointmentsBtn = document.getElementById("appointments");
+    const inicioBtn = document.getElementById("inicio");
+    const patientListBtn = document.getElementById("patients-list") as HTMLElement;
+    patientListBtn.addEventListener("click",(event)=>{
+      window.location.href="../PatientsList";
 
 
-
-      
     })
-    // Show appointment form when clicking "Agendar Cita"
     createAppointmentBtn.addEventListener("click", () => {
-      buttonSection.classList.add("hidden");
-      createAppointmentSection.classList.remove("hidden");
+      // buttonSection.classList.add("hidden");
+      // createAppointmentSection.classList.remove("hidden");
+      // toggleSidebarVisibility(["inicio", "gestion"]);
+      window.location.href ="../CreateAppointment";
     });
-
-    // Update form fields based on patient type
-    patientTypeRadios.forEach((radio) => {
-  radio.addEventListener("change", (event) => {
-    const dynamicFields = document.getElementById("dynamicFields");
-    const searchFields = document.getElementById("searchFields"); // Ensure this element is defined
-    if (event.target instanceof HTMLInputElement) { // Check if the target is an HTMLInputElement
-      if (event.target.value === "new") {
-        searchFields.classList.add("hidden");
-        dynamicFields.innerHTML = `
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
-            <input
-              type="text"
-              id="surname"
-              name="surname"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-        `;
-      } else {
-        searchFields.classList.remove("hidden");
-        dynamicFields.innerHTML = ""; // Clear dynamic fields when not "new"
-      }
-    }
-  });
-});
-
-
-    // Show/Hide emergency-specific fields
-    appointmentTypeRadios.forEach((radio) => {
-  radio.addEventListener("change", (event) => {
-    if (event.target instanceof HTMLInputElement) {
-      if (event.target.value === "emergency") {
-        estadoField.classList.remove("hidden");
-      } else {
-        estadoField.classList.add("hidden");
-      }
-    }
-  });
-});
-
-
-    // Search and autofill patient data
-    searchPatientButton.addEventListener("click", async () => {
-      const searchValue = (searchValueInput as HTMLInputElement).value.trim();
-      if (!searchValue) {
-        alert("Por favor, ingrese un valor para buscar.");
-        return;
-      }
-
-      try {
-        const response = await fetch(`http://localhost:8080/api/patients/${searchValue}`);
-        if (!response.ok) {
-          throw new Error("Paciente no encontrado.");
+  
+    viewAppointmentsBtn.addEventListener("click", () => {
+      // buttonSection.classList.add("hidden");
+      // createAppointmentSection.classList.add("hidden");
+      // toggleSidebarVisibility(["inicio", "gestion"]);
+      window.location.href = "../AppointmentManagement";
+    });
+    
+    inicioBtn.addEventListener("click", () => {
+      window.location.href = "/Views/PersonalReceptionist";
+    });
+  
+    // Logic for handling patient type selection
+    document.querySelectorAll('input[name="patientType"]').forEach((radio) => {
+      radio.addEventListener("change", (event) => {
+        const dynamicFields = document.getElementById("dynamicFields");
+        const searchFields = document.getElementById("searchFields");
+  
+        if (event.target.value === "new") {
+          searchFields.classList.add("hidden");
+          dynamicFields.innerHTML = `
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
+              <input type="text" id="name" name="name" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
+              <input type="text" id="surname" name="surname" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="gobID" class="block text-sm font-medium text-gray-700">GobID (CURP):</label>
+              <input type="text" id="gobID" name="gobID" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="age" class="block text-sm font-medium text-gray-700">Edad:</label>
+              <input type="number" id="age" name="age" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-700">Número Telefónico:</label>
+              <input type="tel" id="phone" name="phone" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="reason" class="block text-sm font-medium text-gray-700">Razón:</label>
+              <input type="text" id="reason" name="reason" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Fecha de Cita:</label>
+              <input type="datetime-local" id="appointmentDate" name="appointmentDate" class="mt-1 block w-full" />
+            </div>
+            <div>
+              <label for="doctor" class="block text-sm font-medium text-gray-700">Médico:</label>
+              <select id="doctor" name="doctor" class="mt-1 block w-full">
+                <option value="">Auto Asignar</option>
+                <option value="pedro">Pedro</option>
+                <option value="maria">Maria</option>
+              </select>
+            </div>
+            <div>
+              <label for="consultorio" class="block text-sm font-medium text-gray-700">Consultorio:</label>
+              <input type="checkbox" id="consultorio" name="consultorio" class="mt-2" />
+            </div>`;
+        } else {
+          searchFields.classList.remove("hidden");
+          dynamicFields.innerHTML = ""; // Clear dynamic fields
         }
-        const patient = await response.json();
-
-        // Autofill fields
-        document.getElementById("dynamicFields").innerHTML = `
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">Nombre:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              value="${patient.name}"
-              readonly
-            />
-          </div>
-          <div>
-            <label for="surname" class="block text-sm font-medium text-gray-700">Apellidos:</label>
-            <input
-              type="text"
-              id="surname"
-              name="surname"
-              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              value="${patient.surname}"
-              readonly
-            />
-          </div>
-        `;
+      });
+    });
+  
+    // Show/Hide Emergency Field
+    document.querySelectorAll('input[name="appointmentType"]').forEach((radio) => {
+      radio.addEventListener("change", (event) => {
+        const estadoField = document.getElementById("estadoField");
+        estadoField.classList.toggle("hidden", event.target.value !== "emergency");
+      });
+    });
+  
+    // Submit Form and Send Data to Backend
+    document.getElementById("createAppointmentForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+  
+      const formData = new FormData(event.target);
+      const data = {
+        appointmentType: formData.get("appointmentType"),
+        patientType: formData.get("patientType"),
+        name: formData.get("name"),
+        surname: formData.get("surname"),
+        gobID: formData.get("gobID"),
+        age: formData.get("age"),
+        phone: formData.get("phone"),
+        reason: formData.get("reason"),
+        appointmentDate: formData.get("appointmentDate"),
+        doctor: formData.get("doctor"),
+        consultorio: formData.get("consultorio") === "on",
+      };
+  
+      try {
+        const response = await fetch("/api/appointments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (!response.ok) throw new Error("Error al crear la cita");
+  
+        alert("Cita creada exitosamente!");
+        event.target.reset();
       } catch (error) {
-        alert(error.message);
+        console.error(error);
+        alert("Error al enviar los datos. Por favor, intente de nuevo.");
       }
     });
-    document.getElementById("submit").addEventListener("click",async()=>{
-
-
-
-    })
+    
   </script>
+  
+  
+
 </Layout>

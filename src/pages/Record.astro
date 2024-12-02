@@ -1,0 +1,185 @@
+---
+// Import Layout
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout title="Record Dashboard">
+  <main class="flex min-h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="bg-blue-500 text-white w-1/5 flex flex-col items-center py-6 space-y-8">
+      <div class="flex flex-col items-center space-y-4">
+        <img src="/icons/heart-icon.svg" alt="Logo" class="w-8 h-8" />
+      </div>
+      <nav class="space-y-6 text-center">
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="inicio">
+          <img src="/icons/home-icon.svg" alt="Home" class="w-6 h-6" />
+          <span>Inicio</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="citas">
+          <img src="/icons/calendar-icon.svg" alt="Citas" class="w-6 h-6" />
+          <span>Citas</span>
+        </button>
+        <button class="flex items-center space-x-4 hover:bg-blue-600 px-4 py-2 w-full" id="gestion">
+          <img src="/icons/pen-icon.svg" alt="Gestión" class="w-6 h-6" />
+          <span>Gestión</span>
+        </button>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <section class="flex-grow p-8 bg-white">
+      <!-- Search Section -->
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex space-x-4">
+          <input
+            type="text"
+            id="patient-id"
+            name="patient-id"
+            class="border border-gray-300 rounded-lg px-4 py-2"
+            placeholder="Buscar paciente: [ID]"
+          />
+          <button
+            id="search-patient"
+            class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          >
+            Buscar
+          </button>
+        </div>
+        <div id="patient-info" class="text-right">
+          <p id="patient-name" class="font-semibold">Nombre del paciente: ---</p>
+          <p id="patient-details" class="text-gray-600">Detalles del paciente</p>
+        </div>
+      </div>
+
+      <!-- Record Section -->
+      <div class="space-y-8">
+        <!-- Historia clínica familiar -->
+        <div>
+          <label for="family-history" class="block text-gray-700 font-semibold mb-2">Historia clínica familiar:</label>
+          <textarea
+            id="family-history"
+            name="family-history"
+            rows="4"
+            disabled
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100"
+            placeholder="Ingrese la historia clínica familiar"
+          ></textarea>
+          <div class="mt-2">
+            <button
+              id="edit-family-history"
+              class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
+            >
+              Editar
+            </button>
+            <button
+              id="save-family-history"
+              class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 hidden"
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
+
+        <!-- Padecimientos y tratamientos actuales -->
+        <div>
+          <label for="current-conditions" class="block text-gray-700 font-semibold mb-2">Padecimientos y tratamientos actuales:</label>
+          <textarea
+            id="current-conditions"
+            name="current-conditions"
+            rows="4"
+            disabled
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100"
+            placeholder="Ingrese los padecimientos y tratamientos actuales"
+          ></textarea>
+          <div class="mt-2">
+            <button
+              id="edit-current-conditions"
+              class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
+            >
+              Editar
+            </button>
+            <button
+              id="save-current-conditions"
+              class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 hidden"
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
+
+        <!-- Citas previas -->
+        <div>
+          <label for="previous-appointments" class="block text-gray-700 font-semibold mb-2">Citas previas:</label>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 text-left">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="border border-gray-300 px-4 py-2">Doctor</th>
+                  <th class="border border-gray-300 px-4 py-2">Fecha y hora</th>
+                  <th class="border border-gray-300 px-4 py-2">Notas</th>
+                </tr>
+              </thead>
+              <tbody id="appointments-table">
+                <tr>
+                  <td colspan="4" class="text-center text-gray-500 py-4">No hay citas previas.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Script to Fetch and Populate Data -->
+    <script>
+     async function fetchPatientData() {
+    const patientId = document.getElementById("patient-id").value.trim();
+    const API_URL = "http://localhost:8080"; // Update as needed
+
+    if (!patientId) {
+        alert("Por favor, ingrese un ID de paciente.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/patient/${patientId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Update patient information
+        document.getElementById("patient-name").textContent = `Nombre del paciente: ${data.name || "No disponible"}`;
+        document.getElementById("family-history").value = data.record?.familyRecord || "";
+        document.getElementById("current-conditions").value = data.record?.currentTreatments || "";
+
+        // Populate the appointments table
+        const appointmentsTable = document.getElementById("appointments-table");
+        appointmentsTable.innerHTML = ""; // Clear existing content
+        if (data.previousAppointments?.length) {
+            data.previousAppointments.forEach((appointment) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="border border-gray-300 px-4 py-2">${appointment.doctor || "N/A"}</td>
+                    <td class="border border-gray-300 px-4 py-2">${appointment.date || "N/A"} ${appointment.time || ""}</td>
+                    <td class="border border-gray-300 px-4 py-2">${appointment.notes || "N/A"}</td>
+                `;
+                appointmentsTable.appendChild(row);
+                
+            });
+        } else {
+            appointmentsTable.innerHTML = `<tr><td colspan="3" class="text-center text-gray-500 py-4">No hay citas previas.</td></tr>`;
+        }
+    } catch (error) {
+        console.error("Error fetching patient data:", error);
+        alert("No se pudo encontrar la información del paciente.");
+    }
+}
+
+
+      // Event listener
+      document.getElementById('search-patient').addEventListener('click', fetchPatientData);
+    </script>
+  </main>
+</Layout>
