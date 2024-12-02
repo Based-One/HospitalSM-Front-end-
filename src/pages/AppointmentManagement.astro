@@ -146,20 +146,16 @@ import Layout from '../layouts/Layout.astro';
       // Mock data for demonstration
       const appointment = {
         id: appointmentId,
-        doctor: { name: 'Dr. John', lastNames: 'Doe' },
-        date: '2024-12-01T09:00:00',
+        date: '--',
       };
 
-      document.getElementById('editAppointmentId').value = appointment.id;
-      document.getElementById('editDoctor').value = `${appointment.doctor.name} ${appointment.doctor.lastNames}`;
-      document.getElementById('editDate').value = new Date(appointment.date).toISOString().slice(0, 16);
+      document.getElementById('editDate').value = appointment.date;
       document.getElementById('editModal').classList.remove('hidden');
     }
 
     document.getElementById('editForm').addEventListener('submit', async (event) => {
       event.preventDefault();
       const appointmentId = document.getElementById('editAppointmentId').value;
-      const updatedDoctor = document.getElementById('editDoctor').value;
       const updatedDate = document.getElementById('editDate').value;
 
       try {

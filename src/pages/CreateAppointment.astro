@@ -1,8 +1,7 @@
 ---
-// Import Layout
 import Layout from '../layouts/Layout.astro';
 ---
-
+  
 <Layout title="Crear Cita">
   <main class="flex min-h-screen bg-gray-100">
     <!-- Sidebar -->
@@ -27,11 +26,11 @@ import Layout from '../layouts/Layout.astro';
           <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cita</label>
           <div class="flex space-x-4">
             <label class="flex items-center">
-              <input type="radio" name="appointmentType" value="regular" class="mr-2" checked />
+              <input type="radio" name="appointmentType" value="1" class="mr-2" checked />
               Regular
             </label>
             <label class="flex items-center">
-              <input type="radio" name="appointmentType" value="emergency" class="mr-2" />
+              <input type="radio" name="appointmentType" value="2" class="mr-2" />
               Emergencia
             </label>
           </div>
@@ -122,7 +121,7 @@ import Layout from '../layouts/Layout.astro';
             <option value="" disabled selected>Seleccione un departamento</option>
           </select>
         </div>
-        <div>
+        <div id="appointmentDateContainer">
           <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Fecha y Hora</label>
           <input
             type="datetime-local"
@@ -173,31 +172,36 @@ import Layout from '../layouts/Layout.astro';
   <script>
     const reasonSelect = document.getElementById('reason');
     const doctorSelect = document.getElementById('doctor');
-    const createAppointment = document.getElementById('create-appointment');
+    const patientTypeRadios = document.querySelectorAll('input[name="patientType"]');
+    const appointmentTypeRadios = document.querySelectorAll('input[name="appointmentType"]');
+    const patientFields = document.getElementById('patientFields');
 
-    // Populate the reason dropdown with departments
+    // Variable para almacenar el ID del paciente
+    let patientId = null;
+
+    // Función para rellenar los departamentos
     async function populateDepartments() {
       try {
         const response = await fetch('http://localhost:8080/reasons');
-        if (!response.ok) throw new Error('Error fetching departments.');
+        if (!response.ok) throw new Error('Error al obtener los departamentos.');
         const departments = await response.json();
 
         departments.forEach((department) => {
           const option = document.createElement('option');
-          option.value = department.id; // Assuming the department has an `id` field
-          option.textContent = department.name; // Assuming the department has a `name` field
+          option.value = department.id; // Asumiendo que el departamento tiene un campo `id`
+          option.textContent = department.name; // Asumiendo que el departamento tiene un campo `name`
           reasonSelect.appendChild(option);
         });
       } catch (error) {
-        console.error('Error loading departments:', error);
+        console.error('Error al cargar los departamentos:', error);
         alert('Error al cargar los departamentos. Intente de nuevo.');
       }
     }
 
-    // Populate the doctor dropdown based on the selected department
+    // Función para rellenar los médicos según el departamento seleccionado
     async function populateDoctors(departmentId) {
       try {
-        // Clear existing doctors
+        // Limpiar médicos existentes
         doctorSelect.innerHTML = '<option value="">Seleccione un médico</option>';
 
         if (!departmentId) {
@@ -206,48 +210,201 @@ import Layout from '../layouts/Layout.astro';
         }
 
         const response = await fetch(`http://localhost:8080/doctors?departmentId=${departmentId}`);
-        if (!response.ok) throw new Error('Error fetching doctors.');
+        if (!response.ok) throw new Error('Error al obtener los médicos.');
         const doctors = await response.json();
 
         doctors.forEach((doctor) => {
           const option = document.createElement('option');
-          option.value = doctor.id; // Assuming the doctor has an `id` field
-          option.textContent = doctor.name; // Assuming the doctor has a `name` field
+          option.value = doctor.id; // Asumiendo que el médico tiene un campo `id`
+          option.textContent = doctor.name; // Asumiendo que el médico tiene un campo `name`
           doctorSelect.appendChild(option);
         });
 
         doctorSelect.disabled = false;
       } catch (error) {
-        console.error('Error loading doctors:', error);
+        console.error('Error al cargar los médicos:', error);
         alert('Error al cargar los médicos. Intente de nuevo.');
       }
     }
 
-    // Event listener for department change
+    // Listener para cambios en el departamento
     reasonSelect.addEventListener('change', (event) => {
       const departmentId = event.target.value;
       populateDoctors(departmentId);
     });
 
-    // Call the function to populate the department dropdown
+    // Función para autocompletar el campo "Razón" en Emergencias
+    function handleAppointmentTypeChange() {
+      const selectedType = document.querySelector('input[name="appointmentType"]:checked').value;
+      const appointmentDateField = document.getElementById('appointmentDateContainer'); // Obtener el campo de Fecha y Hora
+
+      if (selectedType === '2') {
+        // Supongamos que el departamento de Emergencia tiene un ID específico, por ejemplo, "emergencia_id"
+        // Puedes ajustar esto según tu API y datos
+        const emergencyDepartmentId = '3'; // Reemplaza con el ID real
+        reasonSelect.value = emergencyDepartmentId;
+        // Desencadenar el evento change para cargar los médicos correspondientes
+        populateDoctors(emergencyDepartmentId);
+        appointmentDateField.required = false;
+        appointmentDateField.hidden = true;
+        reasonSelect.disabled = true; // Opcional: deshabilitar para evitar cambios
+      } else {
+        reasonSelect.value = '';
+        reasonSelect.disabled = false;
+        appointmentDateField.hidden = false;
+        appointmentDateField.required = true;
+      }
+    }
+
+    // Listener para cambios en el tipo de cita
+    appointmentTypeRadios.forEach(radio => {
+      radio.addEventListener('change', handleAppointmentTypeChange);
+    });
+
+    // Función para autocompletar los campos del paciente
+    async function fetchPatientData(type, value) {
+      try {
+        let url = '';
+        if (type === 'id') {
+          url = `http://localhost:8080/patient/${value}`;
+        } else if (type === 'gob-id') {
+          url = `http://localhost:8080/patient/${value}`;
+        } else {
+          // Si es un nuevo paciente, limpiar los campos
+          document.getElementById('name').value = '';
+          document.getElementById('surname').value = '';
+          document.getElementById('gobId').value = '';
+          document.getElementById('age').value = '';
+          document.getElementById('phone').value = '';
+          patientId = null;
+          return;
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Paciente no encontrado.');
+
+        const patient = await response.json();
+
+        // Rellenar los campos con los datos del paciente
+        document.getElementById('name').value = patient.name || '';
+        document.getElementById('surname').value = patient.lastNames || '';
+        document.getElementById('gobId').value = patient.gobId || '';
+        document.getElementById('age').value = patient.age || '';
+        document.getElementById('phone').value = patient.phoneNumber || '';
+        patientId = patient.id || null; // Asumiendo que la respuesta incluye `id`
+      } catch (error) {
+        console.error('Error al obtener los datos del paciente:', error);
+        alert('No se encontró el paciente. Por favor, verifique el ID o Gob ID.');
+        // Limpiar los campos en caso de error
+        document.getElementById('name').value = '';
+        document.getElementById('surname').value = '';
+        document.getElementById('gobId').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('phone').value = '';
+        patientId = null;
+      }
+    }
+
+    // Listener para cambios en el tipo de paciente
+    patientTypeRadios.forEach(radio => {
+      radio.addEventListener('change', async (event) => {
+        const selectedType = event.target.value;
+        if (selectedType === 'new') {
+          // Limpiar los campos si es un nuevo paciente
+          document.getElementById('name').value = '';
+          document.getElementById('surname').value = '';
+          document.getElementById('gobId').value = '';
+          document.getElementById('age').value = '';
+          document.getElementById('phone').value = '';
+          patientId = null;
+        } else {
+          // Solicitar el ID o Gob ID
+          const identifier = selectedType === 'id' ? 'ID' : 'Gob ID';
+          const value = prompt(`Ingrese el ${identifier} del paciente:`);
+          if (value) {
+            await fetchPatientData(selectedType, value);
+          } else {
+            // Si no se ingresa ningún valor, volver a seleccionar "Nuevo Paciente"
+            document.querySelector('input[name="patientType"][value="new"]').checked = true;
+            document.getElementById('name').value = '';
+            document.getElementById('surname').value = '';
+            document.getElementById('gobId').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('phone').value = '';
+            patientId = null;
+          }
+        }
+      });
+    });
+
+    // Función para rellenar los departamentos al cargar la página
     populateDepartments();
-    async function CreateAppointment() {
-      try{
-      const response = await fetch(`http://localhost:8080/appointments`, {
-        method:"POST"
 
+    // Función de envío del formulario
+    async function createAppointmentf(event) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
+      const appointmentTypeStr = document.querySelector('input[name="appointmentType"]:checked').value;
+      const appointmentType = appointmentTypeStr === 'regular' ? 0 : 1; // Mapeo: regular = 0, emergency = 1
+
+      const patientType = document.querySelector('input[name="patientType"]:checked').value;
+      const name = document.getElementById('name').value;
+      const surname = document.getElementById('surname').value;
+      const gobId = document.getElementById('gobId').value || "";
+      const age = parseInt(document.getElementById('age').value, 10);
+      const phone = document.getElementById('phone').value;
+      const reason = parseInt(document.getElementById('reason').value, 10);
+      const appointmentDate = document.getElementById('appointmentDate').value;
+      const doctor = parseInt(document.getElementById('doctor').value, 10);
+      const room = document.getElementById('room').checked;
+
+      // Validaciones adicionales
+      if (!reason || !appointmentDate || !doctor) {
+        alert('Por favor complete todos los campos obligatorios.');
+        return;
       }
-      if(!response.ok){
-        throw new Error('Error fetching creating appointment');
+
+      // Construcción del objeto de solicitud según el DTO del back-end
+      const appointmentData = {
+        appointmentType, // 0 o 1
+        appointmentDoctorId: doctor,
+        patientId: patientId || 0, // 0 puede representar un nuevo paciente o manejarse según el back-end
+        patientGobId: gobId,
+        patientName: name,
+        patientLastNames: surname,
+        patientPhoneNumber: phone,
+        patientAge: age,
+        patientStateId: 1, // Valor predeterminado; ajustar según lógica de negocio
+        appointmentReasonId: reason,
+        appointmentConsultationRoom: room,
+        appointmentDateTime: appointmentDate, // Formato ISO 8601 (ej. "2024-12-02T14:30")
+      };
+
+      try {
+        const response = await fetch('http://localhost:8080/appointments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(appointmentData),
+        });
+
+        if (response.ok) {
+          alert('Cita creada exitosamente');
+          document.getElementById('createAppointmentForm').reset();
+          // Resetear el estado de los selects y campos
+          doctorSelect.innerHTML = '<option value="">Seleccione un médico</option>';
+          doctorSelect.disabled = true;
+          reasonSelect.disabled = false;
+          patientId = null;
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Error al crear la cita');
+        }
+      } catch (error) {
+        console.error('Error al crear la cita:', error);
+        alert('No se pudo crear la cita. Por favor, intente de nuevo.');
       }
-
     }
-    createAppointment.onsubmit = ()=>{
-      
 
-
-
-    }
-  </script> 
+    document.getElementById('createAppointmentForm').addEventListener('submit', createAppointmentf);
+  </script>
 </Layout>
